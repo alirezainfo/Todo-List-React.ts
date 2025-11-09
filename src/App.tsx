@@ -1,34 +1,57 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { getTodo } from './services/todoService'
+import type { todo } from "./types/todo"
 import './App.css'
+import { useState,useEffect } from 'react'
+
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [todos, setTodos] = useState<todo[]>([])
+  const [isLoading, setLoading] = useState<boolean>(false)
 
+  useEffect(()=>{
+    const fetchTodo = async () => {
+      try{
+        const data = await getTodo()
+        setTodos(data)
+      }catch(err:any){
+
+      }finally{
+
+      }
+    }
+
+    fetchTodo()
+  },[])
+ 
   return (
-    <>
+   <>
+    <h1 className='text-gray-900 text-center mt-20'>Alireza's To-Do List</h1>
+
+    <div className='mx-60 flex justify-between items-center'>
+      <div className='flex justify-center items-center gap-2'>
+        <input className='border ' type="text" />
+        <button>Create</button>
+      </div>
       <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+        <select name="" id="">
+          <option value="">گزینه ی مورد نظر را انتخاب کنید.</option>
+          <option value="">2</option>
+          <option value="">3</option>
+        </select>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    </div>
+
+
+    <div id='todoItems' className=''>
+      <ul className='mx-60 flex justify-center items-center flex-wrap'>
+      {todos.slice(0,10).map((todo)=>(
+        <li key={todo.id} className='px-4 py-2 border border-gray-300'>
+          {todo.title}
+        </li>
+      ))}
+      </ul>
+    </div>
+   </>
   )
 }
 
