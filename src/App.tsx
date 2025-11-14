@@ -12,15 +12,22 @@ function addToDoFunc() {
   
   if (!inputValue.trim()) return;
 
-  setTodos((prevTodos) => [
-    {
+  setTodos((prevTodos) => {
+    const newTodos = [
+
+      {
       userId: 1,
       id: prevTodos.length+1,
       title: inputValue,
       completed: false,
     },
     ...prevTodos
-  ]);
+      
+    ]
+
+    localStorage.setItem("Todos",JSON.stringify(newTodos))
+    return newTodos;
+});
 
   setInputValue("");
 }
@@ -29,8 +36,16 @@ function addToDoFunc() {
   useEffect(() => {
     const fetchTodo = async () => {
       try {
-        const data = await getTodo();
-        setTodos(data);
+        const saved = localStorage.getItem("Todos");
+
+        if(saved){
+        setTodos(JSON.parse(saved))
+        }else{
+          const data = await getTodo();
+          localStorage.setItem("Todos", JSON.stringify(data))
+          setTodos(data);
+        }
+        
       } catch (err: any) {
       } finally {
       }
@@ -43,8 +58,8 @@ function addToDoFunc() {
     <>
       <h1 className="text-gray-900 text-center mt-20">Alireza's To-Do List</h1>
 
-      <div className="mx-30 my-10 flex justify-between items-center">
-        <div className="flex justify-center items-center gap-2">
+      <div className="mx-25 my-10 flex justify-between items-center">
+        <div className="flex justify-between items-center gap-2">
           <input id="todoInput" className="border" type="text" value={inputValue} onChange={(e)=>{setInputValue(e.target.value)}} />
           <button onClick={addToDoFunc}>Create</button>
         </div>
@@ -58,7 +73,7 @@ function addToDoFunc() {
       </div>
 
       <div id="todoItems" className="">
-        <ul className="mx-25 flex justify-center items-center flex-wrap gap-1.5">
+        <ul className="mx-25 flex justify-between items-center flex-wrap gap-1.5">
           {todos.slice(0, 10).map((todo) => (
             <li key={todo.id} className="w-[350px] h-20 px-2 border border-gray-300 flex justify-between items-center">
               <p className="">{todo.title}</p>
